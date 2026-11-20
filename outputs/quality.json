@@ -1,0 +1,28 @@
+{
+  "raw_rows": 231664,
+  "banks": 6586,
+  "quarter_count": 44,
+  "ytd_reconciliation_rows": 230847,
+  "ytd_vs_quarterly_mismatches_gt_1_thousand": 400,
+  "chargeoffs_less_recoveries_mismatches_gt_1_thousand": 0,
+  "missing_by_field": {
+    "CRLNLS": 748,
+    "ROA": 0,
+    "DRLNLS": 748,
+    "REPDTE": 0,
+    "ASSET": 0,
+    "LNLSGR": 0,
+    "EQ": 748,
+    "DEP": 0,
+    "NAME": 0,
+    "NTLNLS": 748,
+    "NTLNLSQ": 748,
+    "NCLNLS": 0,
+    "CERT": 0,
+    "ID": 0
+  },
+  "note": "1 means one raw financial unit (thousand dollars). Mismatches can reflect merger/restatement adjustments; exclude mismatches from target construction.",
+  "model_rows": 207112,
+  "model_banks": 6209,
+  "unmatched_or_excluded_rows": 24552
+}

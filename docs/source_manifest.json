@@ -1,0 +1,30 @@
+{
+  "source": "https://banks.data.fdic.gov/api/financials",
+  "filter": "REPDTE:[20150331 TO 20251231]",
+  "fields": [
+    "CERT",
+    "REPDTE",
+    "NAME",
+    "ASSET",
+    "EQ",
+    "LNLSGR",
+    "NCLNLS",
+    "NTLNLS",
+    "NTLNLSQ",
+    "DRLNLS",
+    "CRLNLS",
+    "DEP",
+    "ROA"
+  ],
+  "retrieved_utc": "2026-11-11T02:12:11.901887+00:00",
+  "index": {
+    "name": "risview_20260819185831",
+    "createTimestamp": "2026-08-19T18:58:33Z"
+  },
+  "rows": 231664,
+  "entities": 6586,
+  "sha256": "27efac39a0eaa70c7fcc97cb5b21e6b74f35265a4704e26b31bca2cd72b86f1c",
+  "metadata_url": "https://api.fdic.gov/banks/docs/risview_properties.yaml",
+  "scope": "Individual institution financial reports returned by FDIC API; not holding companies",
+  "status": "real public FDIC data; current restated snapshot, not historical vintages"
+}

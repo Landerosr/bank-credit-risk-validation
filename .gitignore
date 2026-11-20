@@ -1,0 +1,9 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+data/
+outputs/test_predictions.csv
+.ipynb_checkpoints/

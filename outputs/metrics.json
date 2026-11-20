@@ -1,0 +1,98 @@
+{
+  "data_status": "REAL PUBLIC FDIC DATA, RESTATED SNAPSHOT",
+  "target": "Nonannualized quarterly net chargeoffs / average beginning-end gross loans, percent",
+  "horizon": "Report q -> forecast origin end q+1 -> target q+2; original release vintages unavailable",
+  "selected_alpha": 1000,
+  "validation_grid": [
+    {
+      "alpha": 0.1,
+      "n": 33561,
+      "MAE_pp": 0.055224678191880386,
+      "RMSE_pp": 0.5943871709165565,
+      "bias_pp": 0.0022540982121639743,
+      "median_absolute_error_pp": 0.020981259780323495
+    },
+    {
+      "alpha": 1,
+      "n": 33561,
+      "MAE_pp": 0.055224605073145354,
+      "RMSE_pp": 0.5943871965632921,
+      "bias_pp": 0.00225420588170683,
+      "median_absolute_error_pp": 0.020981132646246892
+    },
+    {
+      "alpha": 10,
+      "n": 33561,
+      "MAE_pp": 0.05522387409056384,
+      "RMSE_pp": 0.5943874530259498,
+      "bias_pp": 0.0022552824888313204,
+      "median_absolute_error_pp": 0.02098065652217078
+    },
+    {
+      "alpha": 100,
+      "n": 33561,
+      "MAE_pp": 0.055216585959911094,
+      "RMSE_pp": 0.5943900171816485,
+      "bias_pp": 0.002266039737622656,
+      "median_absolute_error_pp": 0.020962490913206976
+    },
+    {
+      "alpha": 1000,
+      "n": 33561,
+      "MAE_pp": 0.05514567779691939,
+      "RMSE_pp": 0.5944156105432491,
+      "bias_pp": 0.0023727378490935483,
+      "median_absolute_error_pp": 0.02094781202095938
+    }
+  ],
+  "split_rows": {
+    "train": 110399,
+    "validation": 33561,
+    "test": 53590
+  },
+  "split_target_ranges": {
+    "train": [
+      "2015Q4",
+      "2020Q3"
+    ],
+    "validation": [
+      "2021Q1",
+      "2022Q3"
+    ],
+    "test": [
+      "2023Q1",
+      "2025Q4"
+    ]
+  },
+  "test_persistence": {
+    "n": 53590,
+    "MAE_pp": 0.0544397392616476,
+    "RMSE_pp": 0.3736917677990891,
+    "bias_pp": -0.004102781981167578,
+    "median_absolute_error_pp": 0.007019012512876189
+  },
+  "test_ridge": {
+    "n": 53590,
+    "MAE_pp": 0.05878869171303611,
+    "RMSE_pp": 0.4102401062030917,
+    "bias_pp": -0.012845386382619752,
+    "median_absolute_error_pp": 0.01881710699257849
+  },
+  "seasonal_subset": {
+    "seasonal": {
+      "n": 53472,
+      "MAE_pp": 0.0544167199612559,
+      "RMSE_pp": 0.3762466832618767,
+      "bias_pp": -0.007563525935027664,
+      "median_absolute_error_pp": 0.0072541912067802285
+    },
+    "ridge_same_rows": {
+      "n": 53472,
+      "MAE_pp": 0.05877842979101177,
+      "RMSE_pp": 0.41051664275432126,
+      "bias_pp": -0.012808602069021806,
+      "median_absolute_error_pp": 0.018811452713950398
+    }
+  },
+  "claim_limit": "Retrospective research only, not point-in-time or production performance. One bank-weighted observation per quarter; errors correlated across time/banks."
+}
