@@ -1,44 +1,50 @@
-# Bank Credit Risk Lab — Real FDIC Data
+# Bank Credit Risk Forecasting and Model Validation
 
-**This project uses actual publicly reported FDIC financial records only.** Independent educational research inspired by model-development and validation roles. Not affiliated with Wells Fargo; not an internal bank model or regulatory assessment.
+A retrospective study of whether an interpretable statistical model improves forecasts of U.S. bank loan losses relative to a simple persistence benchmark. The analysis uses public FDIC financial reports only. It is an independent educational project, not a Wells Fargo model or a regulatory assessment.
 
-## Main finding
-On 53,590 held-out forecasts targeting 2023–2025, **Ridge did not outperform persistence** (carrying forward the last reported rate). Ridge MAE was 0.058789 percentage points versus 0.054440 for persistence, about 8% higher. The result supports keeping the simple benchmark for this study. See the [saved metrics](outputs/metrics.json) and [validation report](docs/validation.md).
+## Abstract
 
-The verified source snapshot contains 231,664 institution-quarter records from 6,586 entities over 2015–2025. Raw records and row-level predictions are intentionally omitted from GitHub; the pipeline can regenerate them using the [public FDIC API](https://api.fdic.gov/banks/docs). Small saved aggregate diagnostics and the [November 11 source manifest](docs/source_manifest.json) are included. Fresh downloads may differ because reports can be revised.
+The source snapshot contains 231,664 institution-quarter records from 6,586 entities over 2015–2025. On 53,590 held-out forecasts targeting 2023–2025, Ridge regression had a mean absolute error (MAE) of **0.058789 percentage points**, compared with **0.054440** for persistence. Ridge's MAE was about 8% higher. The evidence supports retaining persistence for this study rather than promoting the more complex model. See the [saved metrics](outputs/metrics.json) and [validation report](docs/validation.md) for the evaluation and its limitations.
 
-## Question
-Can a small, interpretable statistical model improve forecasts of future quarterly loan charge-offs relative to repeating the latest reported rate?
+## Estimand and forecast design
 
-## What we predict
-Nonannualized quarterly net charge-offs as a percentage of average beginning/end gross loans. This is a project-defined ratio, not a claim to reproduce FDIC's official annualized rate. It is bank-level accounting loss, not borrower default probability.
+The outcome is the quarterly net charge-off rate: net charge-offs for the quarter divided by the average of beginning- and end-of-quarter gross loans, expressed as a nonannualized percentage. This project-defined measure captures institution-level accounting losses. It is neither an individual borrower's probability of default nor a reproduction of the FDIC's annualized rate.
 
-## Get started
+At the assumed forecast origin, the end of quarter `q+1`, the model uses financials from report quarter `q` to forecast the rate for quarter `q+2`. For example, it uses a 2022Q3 report to forecast 2023Q1 at the end of 2022Q4. The one-quarter reporting buffer avoids assuming immediate publication; it does not establish what was originally observable, because historical filings may have been restated.
+
+## Model selection and evaluation
+
+- **Benchmarks:** Carry forward the latest reported rate (persistence). Compare with a seasonal baseline on the subset with a prior-year observation.
+- **Challenger:** Fit Ridge regression. Imputation, clipping and scaling are learned only from the fitting sample. Clipping applies to predictors, not outcomes. Select the penalty on validation MAE, fix it, and refit on the training and validation periods before evaluating the final test.
+- **Chronological split by target quarter:** Train through 2020Q3; validate on 2021Q1–2022Q3; test on 2023Q1–2025Q4. Exclude 2020Q4 and 2022Q4 to allow an additional reporting quarter for fitting labels before the next evaluation origin.
+
+The held-out results are retrospective, not a live or point-in-time backtest. The same institutions can appear across periods, so the evaluation does not establish performance on previously unseen banks. No production deployment or independent regulatory validation is claimed.
+
+## Reproduce the analysis
+
+From the repository root:
+
 ```bash
 python -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
-python -m src.download     # actual FDIC data, may take several minutes
+python -m pip install -r requirements.txt
+python -m src.download
 python -m src.model
 python -m unittest discover -s tests -v
 ```
-No synthetic fallback exists. Download or validation failures stop the run. Public data can be revised, so record the generated source manifest and checksum.
 
-## Forecast timing
-Use financial report quarter q, allow one full quarter as a reporting buffer, and forecast q+2. Example: report 2022Q3, assumed forecast origin end 2022Q4, target 2023Q1. This avoids pretending quarter-end figures were instantly known. It does **not** establish original availability because the downloaded snapshot may be restated.
+The downloader retrieves public data from the [FDIC financial API](https://api.fdic.gov/banks/docs) and may take several minutes. There is no synthetic fallback. Download or validation failures stop the run. Retain the generated source manifest and checksum: a fresh pull may differ from the [November 11 source snapshot](docs/source_manifest.json).
 
-## Model and validation
-Persistence benchmark; seasonal comparison on available rows; Ridge regression with training-only imputation, feature clipping and scaling. Alpha is selected on validation MAE, then fixed for the final test. Targets are NOT clipped to make scores look better.
+Raw records, the local SQLite database, and institution-level predictions are not committed. The pipeline regenerates them, along with the aggregate diagnostics in [`outputs/`](outputs/).
 
-Target-period splits: training through 2020Q3; validation 2021Q1–2022Q3; test 2023Q1–2025Q4. Targets 2020Q4 and 2022Q4 are embargoed so labels used for fitting have a full reporting quarter before the next evaluation origin. Published metrics describe a retrospective dataset study, not live or point-in-time forecasting. 
+## Repository guide
 
-## Deliverables
-Python model/data pipeline, SQL quality queries, source manifest, data dictionary, development/validation reports, aggregate quarterly diagnostics and learning guide. Running the pipeline generates the local SQLite database and row-level test predictions; neither is committed.
+| Resource | Contents |
+|---|---|
+| [Python pipeline](src/) | Data acquisition, accounting reconciliation, target alignment, model fitting and evaluation |
+| [SQL quality checks](sql/quality_checks.sql) and [tests](tests/) | Panel integrity and reproducibility checks |
+| [Data dictionary](docs/data_dictionary.md) and [source manifest](docs/source_manifest.json) | Field definitions, units and provenance |
+| [Development record](docs/development.md) and [validation report](docs/validation.md) | Modeling choices, diagnostics and limitations |
+| [Learning guide](docs/learning_path.md) | Exercises for interpreting and challenging the analysis |
 
-## Data rights and identity
-This version uses public FDIC data, not licensed WRDS exports. It contains individual FDIC-reporting institutions, not consolidated bank holding companies. Do not mix the two entity types. Do not reuse labels from older drafts: official FDIC metadata identifies **NTLNLS as net charge-offs** and **NCLNLS as noncurrent loans**.
-
-Developed with AI assistance. The learner should understand and challenge the analysis before presenting it as their work. No production deployment, live forecast performance, or independent regulatory validation is claimed.
-
-## Label-availability embargo
-Training labels end 2020Q3, with 2020Q4 embargoed before validation starts 2021Q1. Validation labels end 2022Q3, with 2022Q4 embargoed before test starts 2023Q1. This allows a full quarter for training outcomes to become available before the first next-period forecast. It still does not remove restatement risk.
+**Data scope and attribution.** The observations are individual FDIC-reporting institutions, not consolidated bank holding companies. The study does not use licensed WRDS exports. In the [official FDIC field metadata](https://api.fdic.gov/banks/docs/risview_properties.yaml), `NTLNLS` is net charge-offs and `NCLNLS` is noncurrent loans; the two are not interchangeable. Developed with AI assistance.
